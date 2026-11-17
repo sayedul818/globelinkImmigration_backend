@@ -163,7 +163,8 @@ uses insert-only initialization.
 
 ## Deploying to Vercel
 
-The API runs on Vercel as a single serverless function: `api/index.ts` wraps the
+The API runs on Vercel as a single serverless function: `api/index.js` loads the
+compiled app from `dist/` (built by `npm run build` during deployment) and wraps the
 same Express app used locally, and `vercel.json` routes every path to it. The
 database connection is reused between warm invocations.
 

@@ -25,7 +25,11 @@ const envSchema = z.object({
     .enum(['true', 'false', '1', '0'])
     .optional()
     .transform((value) => (value === undefined ? undefined : value === 'true' || value === '1')),
-  CORS_ORIGINS: z.string().default('http://localhost:3000,http://localhost:8080'),
+  /**
+   * Comma-separated website origins allowed to call the API. When unset, production
+   * allows https://globelinkimmigration.com (and www); development also allows localhost.
+   */
+  CORS_ORIGINS: z.string().optional(),
   CLOUDINARY_CLOUD_NAME: z.string().default(''),
   CLOUDINARY_API_KEY: z.string().default(''),
   CLOUDINARY_API_SECRET: z.string().default(''),

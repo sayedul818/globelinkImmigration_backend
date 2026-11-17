@@ -15,6 +15,7 @@ import { createCountryGuideRouter } from './country-guides/routes.js';
 import { createDestinationContentRouter } from './destination-content/routes.js';
 import { createMediaRouter } from './media/routes.js';
 import { createHomepageRouter } from './homepage/routes.js';
+import { cors, resolveAllowedOrigins } from './middleware/cors.js';
 
 export function createApp() {
   const app = express();
@@ -23,27 +24,7 @@ export function createApp() {
   app.disable('x-powered-by');
   // Behind Vercel (or another proxy) the real client IP is in X-Forwarded-For.
   if (config.TRUST_PROXY ?? Boolean(process.env['VERCEL'])) app.set('trust proxy', 1);
-  app.use((request, response, next) => {
-    const origin = request.headers.origin;
-    const allowedOrigins = config.CORS_ORIGINS.split(',')
-      .map((value) => value.trim())
-      .filter(Boolean);
-
-    if (origin && allowedOrigins.includes(origin)) {
-      response.setHeader('Access-Control-Allow-Origin', origin);
-      response.setHeader('Access-Control-Allow-Credentials', 'true');
-      response.setHeader('Access-Control-Allow-Methods', 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS');
-      response.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-      response.setHeader('Vary', 'Origin');
-    }
-
-    if (request.method === 'OPTIONS') {
-      response.sendStatus(origin && allowedOrigins.includes(origin) ? 204 : 403);
-      return;
-    }
-
-    next();
-  });
+  app.use(cors(resolveAllowedOrigins(config.CORS_ORIGINS, config.NODE_ENV)));
   app.use(express.json({ limit: '1mb' }));
   app.use(cookieParser());
 

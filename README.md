@@ -178,14 +178,18 @@ database connection is reused between warm invocations.
    | `NODE_ENV` | `production` |
    | `MONGODB_URI` | Atlas connection string |
    | `JWT_ACCESS_SECRET`, `JWT_REFRESH_SECRET` | two different random strings, 32+ characters |
-   | `CORS_ORIGINS` | the website URL(s), e.g. `https://your-site.lovable.app` |
+   | `CORS_ORIGINS` | optional — defaults to `https://globelinkimmigration.com,https://www.globelinkimmigration.com` in production. Add other origins (e.g. a Lovable preview URL) comma-separated. |
    | `COOKIE_SECURE` | `true` |
-   | `COOKIE_SAME_SITE` | `none` if the website and API are on different domains, otherwise `lax` |
+   | `COOKIE_SAME_SITE` | `lax` when the API is on `api.globelinkimmigration.com` (recommended); `none` if it stays on `*.vercel.app` |
    | `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET` | from Cloudinary |
 
    The API refuses to start in production with placeholder JWT secrets, a local
    database URL, or `COOKIE_SAME_SITE=none` without `COOKIE_SECURE=true`.
-4. **Point the website at the API:** set `VITE_API_URL=https://<your-api>.vercel.app/api/v1`
+   **Recommended:** add the custom domain `api.globelinkimmigration.com` to the Vercel project
+   (Settings → Domains, then the CNAME record Vercel shows at your DNS provider). Then the
+   website and API share a site, so the sign-in cookie is first-party and is not blocked by
+   Safari or browser third-party-cookie restrictions.
+4. **Point the website at the API:** set `VITE_API_URL=https://api.globelinkimmigration.com/api/v1` (or the `*.vercel.app` URL)
    in the frontend's build environment and rebuild it.
 5. **Check:** `https://<your-api>.vercel.app/api/v1/health` returns `{"status":"ok", ...}`.
 

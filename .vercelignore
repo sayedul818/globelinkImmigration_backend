@@ -1,0 +1,7 @@
+# Never upload local secrets; set environment variables in the Vercel dashboard instead.
+.env
+.env.*
+!.env.example
+node_modules
+dist
+tests
